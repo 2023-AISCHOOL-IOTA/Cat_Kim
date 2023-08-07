@@ -72,6 +72,9 @@ void loop() {
   // DS18B20(수중온도센서) 센서로부터 온도 값 읽어오기
   sensors.requestTemperatures();
   float temperatureC = sensors.getTempCByIndex(0);
+    // 온도 값들을 int로 변환하여 저장
+  int t_int = static_cast<int>(t);
+  int temperatureC_int = static_cast<int>(temperatureC);
 
   // XKC-Y25-NPN(비접촉 수위센서) 센서 값 읽기
   int sensorValue = digitalRead(sensorPin);
@@ -84,30 +87,35 @@ void loop() {
   else if (temperatureC >= 28) {
     digitalWrite(relayPin, LOW);
   }
+  // (이전 코드 유지)
 
   // LCD 디스플레이에 정보 표시
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("Humidity: ");
-  lcd.print(h);
+  lcd.print(static_cast<int>(h)); // 습도 값을 반올림하여 정수로 변환하여 출력
   lcd.print(" %");
   lcd.setCursor(1, 1);
-  lcd.print("Temperature: ");
-  lcd.print(t);
+  lcd.print("Temperature(DHT11): ");
+  lcd.print(t_int);
   lcd.print(" °C");
   lcd.setCursor(2, 2);
+  lcd.print("Temperature(DS18B20): ");
+  lcd.print(temperatureC_int);
+  lcd.print(" °C");
+  lcd.setCursor(3, 3);
   lcd.print("Water Detected: ");
   lcd.print(sensorValue == HIGH ? "Yes" : "No");
 
   // 시리얼 모니터에 정보 출력
   Serial.print("Humidity: ");
-  Serial.print(h);
+  Serial.print(static_cast<int>(h)); // 습도 값을 반올림하여 정수로 변환하여 출력
   Serial.print(" %\t");
   Serial.print("Temperature(DHT11): ");
-  Serial.print(t);
+  Serial.print(t_int);
   Serial.print(" °C\t");
   Serial.print("Temperature(DS18B20): ");
-  Serial.print(temperatureC);
+  Serial.print(temperatureC_int);
   Serial.print(" °C\t");
   Serial.print("Water Detected: ");
   Serial.println(sensorValue == HIGH ? "Yes" : "No");
