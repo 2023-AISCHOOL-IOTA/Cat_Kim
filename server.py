@@ -23,8 +23,8 @@ def read_sensor_data():  # 센서 데이터 읽기 함수
     while True:
         line = ser.readline().decode('utf-8').strip()  # 시리얼 포트에서 데이터 읽기
         humidity, temperature = map(float, line.split('\t'))  # 데이터 파싱
-        sensor_data = {'humidity': humidity,
-                       'temperature': temperature,
+        sensor_data = {'humidity': Humidity,
+                       'temperature': temperatureC,
                        'water_level': water_level}  # 전역 변수에 저장
 
 
@@ -35,11 +35,10 @@ Thread(target=read_sensor_data).start()
 app = Flask(__name__)
 
 
-@app.route('/sensor_data', methods=['GET'])  # Flask route 설정
+@app.route('/sensor_data', methods=['GET'])  # /sensor_data 경로에 대한 Flask route 설정
 def get_sensor_data():
     # /sensor_data 경로로 GET 요청이 들어오면 센서 데이터를 JSON 형태로 반환
     return jsonify(sensor_data)
-
 
 # Flask 앱 실행
 if __name__ == '__main__':
