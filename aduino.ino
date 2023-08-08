@@ -30,7 +30,7 @@ SoftwareSerial bluetooth(6, 5);
 void setup() {
   Serial.begin(9600);
   bluetooth.begin(9600);
-
+  
   // DHT11 센서 초기화
   dht.begin();
 
@@ -56,7 +56,6 @@ void setup() {
   lcd.setCursor(3, 3);
   lcd.print("4Line Display");
 }
-
 void loop() {
   // 블루투스 모듈로부터 데이터 수신
   if (bluetooth.available()) {
@@ -72,7 +71,8 @@ void loop() {
   // DS18B20(수중온도센서) 센서로부터 온도 값 읽어오기
   sensors.requestTemperatures();
   float temperatureC = sensors.getTempCByIndex(0);
-    // 온도 값들을 int로 변환하여 저장
+
+  // 온도 값들을 int로 변환하여 저장
   int t_int = static_cast<int>(t);
   int temperatureC_int = static_cast<int>(temperatureC);
 
@@ -87,23 +87,24 @@ void loop() {
   else if (temperatureC >= 28) {
     digitalWrite(relayPin, LOW);
   }
+
   // (이전 코드 유지)
 
   // LCD 디스플레이에 정보 표시
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("Humidity: ");
+  lcd.print("Humidity  : ");
   lcd.print(static_cast<int>(h)); // 습도 값을 반올림하여 정수로 변환하여 출력
   lcd.print(" %");
-  lcd.setCursor(1, 1);
-  lcd.print("Temperature(DHT11): ");
+  lcd.setCursor(0, 1);
+  lcd.print("Vase Temp : ");
   lcd.print(t_int);
-  lcd.print(" °C");
-  lcd.setCursor(2, 2);
-  lcd.print("Temperature(DS18B20): ");
+  lcd.print(" C");
+  lcd.setCursor(0, 2);
+  lcd.print("Bowl Temp : ");
   lcd.print(temperatureC_int);
-  lcd.print(" °C");
-  lcd.setCursor(3, 3);
+  lcd.print(" C");
+  lcd.setCursor(0, 3);
   lcd.print("Water Detected: ");
   lcd.print(sensorValue == HIGH ? "Yes" : "No");
 
