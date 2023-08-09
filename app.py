@@ -2,7 +2,7 @@
 from flask import Flask, render_template, jsonify, request, redirect
 import serial as pyserial
 import bluetooth
-import db
+import Cat_Kim.db as db
 
 # 병렬처리
 
