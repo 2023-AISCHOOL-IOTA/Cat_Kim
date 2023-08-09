@@ -1,5 +1,0 @@
-flutter_native_splash:
-  color : "#FFFFFF"
-  image : asset/img/aqua_cycle_logo_5.png
-  fullscreen : true
-  android_12 :

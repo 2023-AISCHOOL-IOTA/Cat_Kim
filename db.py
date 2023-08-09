@@ -4,8 +4,6 @@ import pymysql as ps
 conn = ps.connect(host='project-db-stu3.smhrd.com', port=3307,
                   user='Insa4_IOTA_hacksim_4', password='aishcool4', database='Insa4_IOTA_hacksim_4')
 
-curs = conn.cursor()
-
 sensor_data = [
     ('S0001', 'P_온도', 20),
     ('S0002', 'P_습도', 21),

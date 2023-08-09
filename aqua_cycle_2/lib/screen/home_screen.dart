@@ -17,7 +17,7 @@ class HomeScreen extends StatelessWidget {
         ],
         elevation: 0,
         backgroundColor: Color(0xFF54b9de),
-        title: Image.asset('asset/img/aqua_cycle_logo_4.png'),
+        title: Image.asset('asset/img/logo.png'),
         centerTitle: true,
       ),
       drawer: Drawer(
@@ -84,8 +84,15 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
       ),
+
+
+
+
+
       body: Center(
-        child: Text(''),
+        child: Row(
+
+        ),
       ),
     );
   }
