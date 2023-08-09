@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 
 # 시리얼 포트 설정
-#ser = pyserial.Serial(port='COM3', baudrate=9600)
+# ser = pyserial.Serial(port='COM3', baudrate=9600)
 
 # 센서 데이터를 저장할 딕셔너리
 # 온도 습도 수위 외 추가해야 함
@@ -42,8 +42,8 @@ def read_sensor_data():  # 센서 데이터 읽기 함수
 
 
 # read_sensor_data 함수를 새로운 스레드에서 실행
-#thread = Thread(target=read_sensor_data)
-#thread.start()
+# thread = Thread(target=read_sensor_data)
+# thread.start()
 
 
 @app.route('/')  # 메인 페이지 라우트
@@ -126,36 +126,6 @@ def add_to_db():
             <input type="submit" value="Add to DB">
         </form>
         '''
-
-
-def connect_bluetooth():
-    server_sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-    server_sock.settimeout(10)  # 10초 동안 대기
-    try:
-        server_sock.bind(("", bluetooth.PORT_ANY))
-        server_sock.listen(1)
-        client_sock, client_info = server_sock.accept()
-        data = client_sock.recv(1024).decode('utf-8').strip()
-        try:
-            humidity, temp_dht, temp_ds18b20, water_detected = map(
-                int, data.split('\t'))
-            sensor_data.update({
-                'humidity': humidity,
-                'temperature': temp_dht,
-                'water_temp': temp_ds18b20,
-                'water_detected': water_detected
-            })
-            print(f"Received data from Bluetooth: {sensor_data}")
-        except ValueError:
-            print(
-                f"Failed to parse data: {data}. Expected format: 'humidity\ttemp_dht\ttemp_ds18b20\twater_detected'")
-        client_sock.close()
-    except bluetooth.BluetoothError:
-        return "Failed to connect to a Bluetooth device. Try again."
-    finally:
-        server_sock.close()
-
-    return f"Bluetooth connection ended."
 
 
 # Flask 앱 실행
