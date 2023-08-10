@@ -1,5 +1,6 @@
 # Serial port를 통해 입력받은 센서 값 전달
 from flask import Flask, jsonify, request, redirect, render_template
+from flask_cors import CORS
 import serial as pyserial
 from threading import Thread
 import bluetooth
@@ -9,6 +10,10 @@ import db
 
 # Flask 앱 인스턴스 생성
 app = Flask(__name__)
+CORS(app)
+
+# 특정 도메인 허용 시
+# CORS(app, resources={r"/api/*": {"origins": "http://your-allowed-origin.com"}})
 
 
 # 센서 데이터를 저장할 딕셔너리
