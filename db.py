@@ -4,6 +4,13 @@ import pymysql as ps
 conn = ps.connect(host='project-db-stu3.smhrd.com', port=3307,
                   user='Insa4_IOTA_hacksim_4', password='aishcool4', database='Insa4_IOTA_hacksim_4')
 
+sensor_data = [
+    ('S0001', 'P_온도', 20),
+    ('S0002', 'P_습도', 21),
+    ('S0003', 'F_온도', 22),
+    ('S0004', 'F_수위', 20)
+]
+
 
 def save_sensor_data(sensor_data):  # 센서 데이터 저장
     with conn.cursor() as curs:
@@ -43,10 +50,11 @@ def get_plant_data():
         return result
 
 
-# # 데이터 저장 및 조회 예제
+# 데이터 저장 및 조회 예제
+save_sensor_data()
 # save_sensor_data({'humidity': 30.5, 'temperature': 25.0, 'water_level': 5.5})
 # get_sensor_data()
 
 
-# curs.close()
-# conn.close()
+curs.close()
+conn.close()
