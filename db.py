@@ -4,6 +4,8 @@ import pymysql as ps
 conn = ps.connect(host='project-db-stu3.smhrd.com', port=3307,
                   user='Insa4_IOTA_hacksim_4', password='aishcool4', database='Insa4_IOTA_hacksim_4')
 
+curs = conn.cursor()
+
 sensor_data = [
     ('S0001', 'P_온도', 20),
     ('S0002', 'P_습도', 21),
@@ -12,11 +14,11 @@ sensor_data = [
 ]
 
 
-def save_sensor_data(sensor_data):  # 센서 데이터 저장
+def save_sensor_data():  # 센서 데이터 저장
     with conn.cursor() as curs:
-        sql = 'INSERT INTO sensor(humidity, temperature, water_temp, water_detected) VALUES(%s, %s, %s, %s)'
-        curs.execute(
-            sql, (sensor_data['humidity'], sensor_data['temperature'], sensor_data['water_temp'], sensor_data['water_detected']))
+        sql = 'INSERT INTO sensor(sensor_code, sensor_name, sensor_result_value) VALUES(%s, %s, %s)'
+        curs.executemany(
+            sql, sensor_data)
         conn.commit()
 
 
