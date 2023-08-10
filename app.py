@@ -1,18 +1,14 @@
 # Serial port를 통해 입력받은 센서 값 전달
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, redirect, render_template
 import serial as pyserial
-from threading import Thread
 import bluetooth
-import Cat_Kim.db as db
+import db
 
 # 병렬처리
 
 # Flask 앱 인스턴스 생성
 app = Flask(__name__)
 
-
-# 시리얼 포트 설정
-# ser = pyserial.Serial(port='COM3', baudrate=9600)
 
 # 센서 데이터를 저장할 딕셔너리
 # 온도 습도 수위 외 추가해야 함
@@ -22,38 +18,33 @@ sensor_data = {
     'water_temp': None,
     'water_detected': None
 }
-
-
-def read_sensor_data():  # 센서 데이터 읽기 함수
-    # 센서 데이터를 지속적으로 읽어 sensore_data에 저장
-    global sensor_data
-    while True:
-        line = ser.readline().decode('utf-8').strip()  # 시리얼 포트에서 데이터 읽기
-        try:
-            humidity, temp_dht, temp_ds18b20, water_detected = map(
-                int, line.split('\t'))  # 데이터 파싱
-            sensor_data = {
-                'humidity': humidity,
-                'temperature': temp_dht,
-                'water_temp': temp_ds18b20,
-                'water_detected': water_detected}  # 전역 변수에 저장
-        except ValueError:
-            print(f"Failed to parse data: {line}")
-
-
-# read_sensor_data 함수를 새로운 스레드에서 실행
-# thread = Thread(target=read_sensor_data)
-# thread.start()
+print(sensor_data)
 
 
 @app.route('/')  # 메인 페이지 라우트
 def welcome():
-    return "Welcome to the Aqua Cycle Project!"
+    return render_template('index.html')
+    # return "<h1>Welcome to the Aqua Cycle Project!</h1><br><a href=/sensor>Go to Sensor Page</a><br><a href=/bt>Go to Sensor Page</a>"
 
 
-@app.route('/sensor', methods=['GET'])  # Flask route 설정
-def get_sensor_data():
-    # /sensor_data 경로로 GET 요청이 들어오면 센서 데이터를 JSON 형태로 반환
+@app.route('/sensor', methods=['GET'])
+def get_sensor_data_from_arduino():
+    with pyserial.Serial(port='COM8', baudrate=9600, timeout=5) as ser:
+        line = ser.readline().decode('utf-8').strip()
+        try:
+            humidity, temp_dht, temp_ds18b20, water_detected = map(
+                int, line.split('\t'))
+            sensor_data.update({
+                'humidity': humidity,
+                'temperature': temp_dht,
+                'water_temp': temp_ds18b20,
+                'water_detected': water_detected
+            })
+            # db.save_sensor_data(sensor_data)
+            print(f"{sensor_data} is saved in database")
+        except ValueError:
+            print(
+                f"Failed to parse data: {line}. Expected format: 'humidity\ttemp_dht\ttemp_ds18b20\twater_detected'")
     return jsonify(sensor_data)
 
 
@@ -88,9 +79,27 @@ def connect_bluetooth():
 
 # DB 함수 테스트
 # DB 조회
-@app.route('/db/view', methods=['GET'])
-def view_db():
+@app.route('/db/sensor', methods=['GET'])
+def view_sensor():
     data = db.get_sensor_data()
+    # 데이터를 HTML 형식으로 보여줄 수 있도록 변환
+    # 예를 들어, 간단하게 문자열 형태로 표시
+    formatted_data = '<br>'.join(map(str, data))
+    return f"<h1>DB Data</h1><pre>{formatted_data}</pre>"
+
+
+@app.route('/db/fish', methods=['GET'])
+def view_fish():
+    data = db.get_fish_data()
+    # 데이터를 HTML 형식으로 보여줄 수 있도록 변환
+    # 예를 들어, 간단하게 문자열 형태로 표시
+    formatted_data = '<br>'.join(map(str, data))
+    return f"<h1>DB Data</h1><pre>{formatted_data}</pre>"
+
+
+@app.route('/db/plant', methods=['GET'])
+def view_plant():
+    data = db.get_plant_data()
     # 데이터를 HTML 형식으로 보여줄 수 있도록 변환
     # 예를 들어, 간단하게 문자열 형태로 표시
     formatted_data = '<br>'.join(map(str, data))
@@ -130,4 +139,4 @@ def add_to_db():
 
 # Flask 앱 실행
 if __name__ == '__main__':
-    app.run(host="192.168.21.238", port=9000, debug=True)
+    app.run(host="192.168.21.123", port=9000, debug=True)

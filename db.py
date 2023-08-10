@@ -4,6 +4,8 @@ import pymysql as ps
 conn = ps.connect(host='project-db-stu3.smhrd.com', port=3307,
                   user='Insa4_IOTA_hacksim_4', password='aishcool4', database='Insa4_IOTA_hacksim_4')
 
+curs = conn.cursor()
+
 sensor_data = [
     ('S0001', 'P_온도', 20),
     ('S0002', 'P_습도', 21),
@@ -11,20 +13,43 @@ sensor_data = [
     ('S0004', 'F_수위', 20)
 ]
 
-def save_sensor_data():  # 측정된 센서 데이터 저장
-    # sql 구문 수정해야 함
-    sql = 'INSERT INTO sensor(sensor_code, sensor_name, sensor_result_value) VALUES(%s, %s, %s)'
-    curs.executemany(sql, sensor_data)
 
-    conn.commit()
+def save_sensor_data():  # 센서 데이터 저장
+    with conn.cursor() as curs:
+        sql = 'INSERT INTO sensor(sensor_code, sensor_name, sensor_result_value) VALUES(%s, %s, %s)'
+        curs.executemany(
+            sql, sensor_data)
+        conn.commit()
 
 
 def get_sensor_data():  # 센서 데이터 조회
-    sql = 'select * from fish'
-    curs.execute(sql)
+    with conn.cursor() as curs:
+        sql = 'select * from sensor'
+        curs.execute(sql)
 
-    result = curs.fetchall()
-    print(result)
+        result = curs.fetchall()
+        print(result)
+        return result
+
+
+def get_fish_data():
+    with conn.cursor() as curs:
+        sql = 'select * from fish'
+        curs.execute(sql)
+
+        result = curs.fetchall()
+        print(result)
+        return result
+
+
+def get_plant_data():
+    with conn.cursor() as curs:
+        sql = 'select * from plant'
+        curs.execute(sql)
+
+        result = curs.fetchall()
+        print(result)
+        return result
 
 
 # 데이터 저장 및 조회 예제
