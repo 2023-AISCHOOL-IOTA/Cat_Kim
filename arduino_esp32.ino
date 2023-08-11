@@ -90,7 +90,7 @@ void loop() {
   delay(1000);
 
   // DS18B20 센서 값에 따른 릴레이 제어
-  if (static_cast<int>(temperatureC) >= 25) {
+  if (static_cast<int>(temperatureC) <= 25) {
     digitalWrite(relayPin, HIGH);
   } else if (static_cast<int>(temperatureC) >= 28) {
     digitalWrite(relayPin, LOW);
