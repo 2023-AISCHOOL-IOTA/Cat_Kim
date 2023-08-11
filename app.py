@@ -1,10 +1,14 @@
 # Serial port를 통해 입력받은 센서 값 전달
-from flask import Flask, jsonify, request, redirect, render_template
-import serial as pyserial
+from flask import Flask, jsonify, request, Response, redirect, render_template
+from flask_cors import CORS
+# import serial as pyserial
 import db
+import json
 
 # Flask 앱 인스턴스 생성
 app = Flask(__name__)
+app.config['JSON_AS_ASCII'] = False
+CORS(app)
 
 
 # 센서 데이터를 저장할 딕셔너리
@@ -56,17 +60,60 @@ def welcome():
 def view_data(table_name):
     if table_name == 'sensor':
         data = db.get_sensor_data()
+        formatted_data = [
+            {
+                "code": item[0],
+                "name": item[1],
+                "value": item[2]
+            }
+            for item in data
+        ]
     elif table_name == 'fish':
         data = db.get_fish_data()
+        formatted_data = [
+            {
+                "code": item[0],
+                "name": item[1],
+                "description": item[2],
+                "min_temp": item[3],
+                "max_temp": item[4]
+            }
+            for item in data
+        ]
     elif table_name == 'plant':
         data = db.get_plant_data()
+        formatted_data = [
+            {
+                "code": item[0],
+                "name": item[1],
+                "description": item[2],
+                "min_temp": item[3],
+                "max_temp": item[4]
+            }
+            for item in data
+        ]
     elif table_name == 'user':
         data = db.get_user_data()
+        formatted_data = [
+            {
+                "code": item[0],
+                "name": item[1],
+                "description": item[2],
+                "min_temp": item[3],
+                "max_temp": item[4]
+            }
+            for item in data
+        ]
     else:
         return jsonify({"error": "Invalid table name"}), 400
 
-    formatted_data = '<br>'.join(map(str, data))
-    return f"<a href=../../>Home</a><h1>DB Data</h1><pre>{formatted_data}</pre>"
+    # formatted_data = '<br>'.join(map(str, data))
+    # return f"<a href=../../>Home</a><h1>DB Data</h1><pre>{formatted_data}</pre>"
+    print(formatted_data)
+    response_data = json.dumps(formatted_data, ensure_ascii=False)
+    response = Response(
+        response_data, content_type="application/json; charset=utf-8")
+    return response
 
 # DB 추가
 
@@ -98,8 +145,19 @@ def add_to_db():
 def search_fish():
     fish_name = request.form['fish_name']
     data = db.search_fish_data(fish_name)
+    print(data)
+    formatted_data = [
+        {
+            "code": item[0],
+            "name": item[1],
+            "description": item[2],
+            "min_temp": item[3],
+            "max_temp": item[4]
+        }
+        for item in data
+    ]
     if data:
-        return jsonify(data)
+        return jsonify(formatted_data)
     else:
         return jsonify({"message": "No fish found with that name!"})
 
@@ -108,12 +166,23 @@ def search_fish():
 def search_plant():
     plant_name = request.form['plant_name']
     data = db.search_plant_data(plant_name)
+    print(data)
+    formatted_data = [
+        {
+            "code": item[0],
+            "name": item[1],
+            "description": item[2],
+            "min_temp": item[3],
+            "max_temp": item[4]
+        }
+        for item in data
+    ]
     if data:
-        return jsonify(data)
+        return jsonify(formatted_data)
     else:
         return jsonify({"message": "No plant found with that name!"})
 
 
 # Flask 앱 실행
 if __name__ == '__main__':
-    app.run(host="192.168.21.123", port=9000, debug=True)
+    app.run(host="0.0.0.0", port=9000, debug=True)
