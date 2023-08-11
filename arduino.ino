@@ -121,6 +121,8 @@ void loop() {
   Serial.print("Water Detected: ");
   Serial.println(sensorValue == HIGH ? "Yes" : "No");
 
+  bluetooth.print(t_int);
+
   delay(5000); // 5초마다 데이터 업데이트
 }
 

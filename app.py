@@ -145,7 +145,7 @@ def add_to_db():
 def search_fish():
     fish_name = request.form['fish_name']
     data = db.search_fish_data(fish_name)
-    print(data)
+
     formatted_data = [
         {
             "code": item[0],
@@ -156,6 +156,7 @@ def search_fish():
         }
         for item in data
     ]
+
     if data:
         return jsonify(formatted_data)
     else:
@@ -166,19 +167,29 @@ def search_fish():
 def search_plant():
     plant_name = request.form['plant_name']
     data = db.search_plant_data(plant_name)
-    print(data)
-    formatted_data = [
-        {
-            "code": item[0],
-            "name": item[1],
-            "description": item[2],
-            "min_temp": item[3],
-            "max_temp": item[4]
-        }
-        for item in data
-    ]
+    print(jsonify(data))
+    # formatted_data = []
+
+    # for item in data:
+    #     try:
+    #         formatted_data.append({
+    #             "code": item[0],
+    #             "name": item[1],
+    #             "description": item[2],
+    #             "min_temp": item[3],
+    #             "max_temp": item[4]
+    #         })
+    #     except IndexError:
+    #         formatted_data.append({
+    #             "code": item[0] if len(item) > 0 else "N/A",
+    #             "name": item[1] if len(item) > 1 else "N/A",
+    #             "description": item[2] if len(item) > 2 else "N/A",
+    #             "min_temp": item[3] if len(item) > 3 else "N/A",
+    #             "max_temp": item[4] if len(item) > 4 else "N/A"
+    #         })
+
     if data:
-        return jsonify(formatted_data)
+        return jsonify(data)
     else:
         return jsonify({"message": "No plant found with that name!"})
 
